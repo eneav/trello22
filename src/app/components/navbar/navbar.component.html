@@ -1,0 +1,50 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <div class="logo">
+      <i class="fas fa-clipboard-list"></i>
+      <span>optaTrello</span>
+    </div>
+    <div class="nav-buttons">
+      <button class="nav-button" (click)="openProjectsDialog()">
+        <i class="fas fa-layer-group"></i>
+        projekte
+      </button>  
+    </div>
+  </div>
+  <div class="navbar-right">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="searchLists()"
+        (blur)="closeSearchResults()"
+        placeholder="in leiste suchen .">
+      
+      <div class="search-results" *ngIf="showSearchResults && searchResults.length > 0">
+        <div 
+          class="search-result-item" 
+          *ngFor="let list of searchResults"
+          (click)="selectSearchResult(list)"
+        >
+          <div class="result-title">{{ list.title }}</div>
+          <div class="result-project">{{ list.project_title }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="user-actions">
+      <button class="create-button" (click)="openCreateProjectDialog()">
+        <i class="fas fa-plus"></i>
+        neues projekt
+      </button>
+      <div class="notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge">3</span>
+      </div>
+      <div class="user-profile">
+        <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Profil">
+        <span class="user-status"></span>
+      </div>
+    </div>
+  </div>
+</nav>

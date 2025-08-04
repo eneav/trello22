@@ -1,0 +1,192 @@
+<div class="dashboard" role="main">
+  <div class="workspace">
+    <header class="workspace-header">
+      <h1>
+        Persönlicher Arbeitsbereich
+        <span class="project-title" *ngIf="projectTitle">
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          {{ projectTitle }}
+        </span>
+      </h1>
+      <form class="add-list-form" (ngSubmit)="addList()">
+        <input 
+          type="text" 
+          [(ngModel)]="newListTitle"
+          name="newListTitle"
+          placeholder="Listentitel..."
+          [attr.aria-label]="'Neuer Listentitel'"
+        >
+        <button 
+          type="submit" 
+          class="add-list-btn" 
+          [disabled]="!newListTitle.trim()"
+          [attr.aria-label]="'Neue Liste hinzufügen'"
+        >
+          <i class="fas fa-plus" aria-hidden="true"></i>
+          Neue Liste hinzufügen
+        </button>
+      </form>
+    </header>
+    
+    <div 
+      class="board-lists" 
+      cdkDropList 
+      cdkDropListGroup 
+      cdkDropListOrientation="horizontal"
+      [cdkDropListData]="lists"
+      (cdkDropListDropped)="onListDrop($event)"
+      role="list"
+      aria-label="projekt liste"
+    >
+      <div 
+        class="list" 
+        *ngFor="let list of lists; trackBy: trackByListId" 
+        cdkDrag
+        [cdkDragData]="list"
+        role="listitem"
+      >
+        <header class="list-header" cdkDragHandle>
+          <h2>{{ list.title }}</h2>
+          <div class="list-actions">
+            <span class="task-count" role="status" [attr.aria-label]="getCardCount(list.id) + ' Karten'">
+              {{ getCardCount(list.id) }}
+            </span>
+            <button 
+              class="delete-list-btn" 
+              (click)="deleteList(list.id)"
+              [attr.aria-label]="'Listelöschen: ' + list.title"
+            >
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </header>
+        
+        <div 
+          class="list-cards"
+          cdkDropList
+          [id]="list.id.toString()"
+          [cdkDropListData]="cards[list.id] || []"
+          (cdkDropListDropped)="onCardDrop($event)"
+          role="list"
+          [attr.aria-label]="list.title + ' Karten'"
+        >
+          <ng-container *ngIf="cards[list.id] as listCards">
+            <div 
+              class="card" 
+              *ngFor="let card of listCards; trackBy: trackByCardId"
+              [class.completed]="card.is_completed"
+              [class.in-progress]="card.status === 'in_progress'"
+              [class.in-review]="card.status === 'review'"
+              cdkDrag
+              [cdkDragData]="card"
+              role="listitem"
+            >
+              <div class="card-header">
+                <div class="card-title">
+                  <h3>{{ card.title }}</h3>
+                  <div class="status-dropdown">
+                    <button 
+                      class="status-button" 
+                      [style.background-color]="getStatusColor(card.status)"
+                      [attr.aria-label]="'Kartenstatus: ' + getStatusText(card.status)"
+                      type="button"
+                    >
+                      {{ getStatusText(card.status) }}
+                      <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div 
+                      class="status-options" 
+                      role="menu" 
+                      aria-label="Statusoptionen"
+                    >
+                      <div 
+                        class="status-option" 
+                        *ngFor="let status of cardStatuses"
+                        [class.active]="card.status === status"
+                        (click)="updateCardStatus(card, status); $event.stopPropagation()"
+                        role="menuitem"
+                        [attr.aria-selected]="card.status === status"
+                      >
+                        <span 
+                          class="status-dot" 
+                          [style.background-color]="getStatusColor(status)"
+                          aria-hidden="true"
+                        ></span>
+                        {{ getStatusText(status) }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  class="delete-card-btn" 
+                  (click)="deleteCard(card); $event.stopPropagation()"
+                  [attr.aria-label]="'Kartı sil: ' + card.title"
+                  type="button"
+                >
+                  <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="card-footer">
+                <div class="due-date" *ngIf="card.due_date" role="status">
+                  <i class="far fa-clock" aria-hidden="true"></i>
+                  {{ card.due_date | date:'d MMM' }}
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          
+          <div class="add-card-container" *ngIf="showAddCard[list.id]">
+            <form (ngSubmit)="addCard(list.id)">
+              <input 
+                type="text" 
+                [(ngModel)]="newCardTitle"
+                name="newCardTitle"
+                placeholder="Kartenüberschrift..."
+                [attr.aria-label]="'YNeuer Kartentitel'"
+              >
+              <mat-form-field appearance="outline" class="date-picker">
+                <mat-label>enddatum</mat-label>
+                <input 
+                  matInput 
+                  [matDatepicker]="picker"
+                  [(ngModel)]="newCardDueDate"
+                  name="newCardDueDate"
+                  placeholder="wähl datum"
+                >
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <div class="add-card-actions">
+                <button 
+                  type="submit" 
+                  class="add-card-submit" 
+                  [disabled]="!newCardTitle.trim()"
+                >
+                  Ekle
+                </button>
+                <button 
+                  type="button"
+                  class="add-card-cancel" 
+                  (click)="toggleAddCard(list.id)"
+                >
+                  İptal
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <button 
+            class="add-card-btn" 
+            *ngIf="!showAddCard[list.id]"
+            (click)="toggleAddCard(list.id)"
+            [attr.aria-label]="list.title + ' Neue Karte zur Liste hinzufügen'"
+            type="button"
+          >
+            <i class="fas fa-plus" aria-hidden="true"></i>
+             Neue Karte hinzufügen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
