@@ -56,7 +56,7 @@ export class ProjectsDialogComponent implements OnInit {
   async deleteProject(projectId: string, event: MouseEvent) {
     event.stopPropagation();
 
-    if (!confirm('wirklich projekt löschen?')) {
+    if (!confirm('Wirklich Projekt löschen?')) {
       return;
     }
 
@@ -70,7 +70,7 @@ export class ProjectsDialogComponent implements OnInit {
 
       this.projects = this.projects.filter(p => p.id !== projectId);
     } catch (error) {
-      console.error('Fehler beim Löschen des Projekts', error);
+      console.error('Fehler beim Löschen des Projektes', error);
     }
   }
 } 

@@ -54,7 +54,7 @@
             <button 
               class="delete-list-btn" 
               (click)="deleteList(list.id)"
-              [attr.aria-label]="'Listelöschen: ' + list.title"
+              [attr.aria-label]="'Liste löschen: ' + list.title"
             >
               <i class="fas fa-trash" aria-hidden="true"></i>
             </button>
@@ -145,13 +145,13 @@
                 [attr.aria-label]="'YNeuer Kartentitel'"
               >
               <mat-form-field appearance="outline" class="date-picker">
-                <mat-label>enddatum</mat-label>
+                <mat-label>End Datum</mat-label>
                 <input 
                   matInput 
                   [matDatepicker]="picker"
                   [(ngModel)]="newCardDueDate"
                   name="newCardDueDate"
-                  placeholder="wähl datum"
+                  placeholder="Datum wählen"
                 >
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
@@ -162,14 +162,12 @@
                   class="add-card-submit" 
                   [disabled]="!newCardTitle.trim()"
                 >
-                  Ekle
                 </button>
                 <button 
                   type="button"
                   class="add-card-cancel" 
                   (click)="toggleAddCard(list.id)"
                 >
-                  İptal
                 </button>
               </div>
             </form>
