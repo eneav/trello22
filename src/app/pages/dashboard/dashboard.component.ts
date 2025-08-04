@@ -39,19 +39,16 @@ type CardStatus = 'todo' | 'in_progress' | 'review' | 'done';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  // Temel özellikler
   projectId: number | null = null;
   projectTitle: string = '';
   lists: List[] = [];
   cards: { [key: number]: Card[] } = {};
 
-  // Form kontrolleri
   newListTitle: string = '';
   newCardTitle: string = '';
   newCardDueDate: Date | null = null;
   showAddCard: { [key: number]: boolean } = {};
 
-  // Sabit değerler
   readonly cardStatuses: CardStatus[] = ['todo', 'in_progress', 'review', 'done'];
   private readonly STATUS_COLORS: Record<CardStatus, string> = {
     todo: '#6c757d',
@@ -76,7 +73,6 @@ export class DashboardComponent implements OnInit {
     this.initializeProject();
   }
 
-  // Proje yükleme
   private async initializeProject(): Promise<void> {
     this.route.queryParams.subscribe(async params => {
       const projectId = params['projectId'];
@@ -114,7 +110,7 @@ export class DashboardComponent implements OnInit {
         lists.map(list => this.loadCardsForList(list.id))
       );
     } catch (error) {
-      console.error('fdehler beim hochladen der karte:', error);
+      console.error('Fehler beim hochladen der Karte:', error);
     }
   }
 
@@ -127,7 +123,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Liste işlemleri
   async addList(): Promise<void> {
     if (!this.newListTitle?.trim() || !this.projectId) return;
     
@@ -139,7 +134,7 @@ export class DashboardComponent implements OnInit {
         this.newListTitle = '';
       }
     } catch (error) {
-      console.error('fehleer bei listen erstellung:', error);
+      console.error('Fehler bei Listen erstellung:', error);
     }
   }
 
@@ -153,7 +148,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Kart işlemleri
   async addCard(listId: number): Promise<void> {
     if (!this.newCardTitle?.trim()) return;
     
@@ -204,7 +198,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Sürükleme işlemleri
   async onCardDrop(event: CdkDragDrop<Card[]>): Promise<void> {
     if (event.previousContainer === event.container) {
       if (event.previousIndex === event.currentIndex) return;
@@ -244,7 +237,6 @@ export class DashboardComponent implements OnInit {
     await this.updateListPositions();
   }
 
-  // Yardımcı metodlar
   getCardCount(listId: number): number {
     return this.cards[listId]?.length || 0;
   }
@@ -272,7 +264,6 @@ export class DashboardComponent implements OnInit {
     return card.id;
   }
 
-  // Private yardımcı metodlar
   private resetCardForm(listId: number): void {
     this.newCardTitle = '';
     this.newCardDueDate = null;

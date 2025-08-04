@@ -49,7 +49,6 @@ export class SupabaseService {
     }
   }
 
-  // Proje işlemleri
   async loadProjectDetails(projectId: number) {
     try {
       const { data, error } = await this.supabase
@@ -66,7 +65,6 @@ export class SupabaseService {
     }
   }
 
-  // Liste işlemleri
   async loadLists(projectId: number) {
     try {
       const { data, error } = await this.supabase
@@ -151,7 +149,6 @@ export class SupabaseService {
     }
   }
 
-  // Kart işlemleri
   async loadCards(listId: number) {
     try {
       const { data, error } = await this.supabase
@@ -255,7 +252,6 @@ export class SupabaseService {
     }
   }
 
-  // Yardımcı fonksiyonlar
   private async getNextListPosition(projectId: number): Promise<number> {
     const { data } = await this.supabase
       .from('lists')
